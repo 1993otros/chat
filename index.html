@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <title>EMPRETUR IA</title>
 
   <style>
@@ -25,7 +26,7 @@
 
     .sidebar{
       width:280px;
-      background:#0f172a;
+      background:#07142c;
       color:white;
       padding:24px;
       display:flex;
@@ -34,7 +35,7 @@
     }
 
     .logo{
-      font-size:28px;
+      font-size:36px;
       font-weight:bold;
       color:#38bdf8;
       margin-bottom:30px;
@@ -47,20 +48,22 @@
     }
 
     .menu-item{
-      background:#1e293b;
-      padding:14px;
-      border-radius:12px;
+      background:#162540;
+      padding:16px;
+      border-radius:14px;
       cursor:pointer;
       transition:0.2s;
+      font-size:16px;
     }
 
     .menu-item:hover{
-      background:#334155;
+      background:#243755;
     }
 
     .bottom-info{
       font-size:13px;
       opacity:0.8;
+      line-height:1.5;
     }
 
     /* MAIN */
@@ -69,6 +72,7 @@
       flex:1;
       display:flex;
       flex-direction:column;
+      overflow:hidden;
     }
 
     /* HEADER */
@@ -90,9 +94,10 @@
     .status{
       background:#dcfce7;
       color:#166534;
-      padding:8px 15px;
+      padding:10px 18px;
       border-radius:30px;
       font-size:14px;
+      font-weight:bold;
     }
 
     /* DASHBOARD */
@@ -102,7 +107,7 @@
       display:grid;
       grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
       gap:20px;
-      background:#f8fafc;
+      background:#eef2f7;
     }
 
     .card{
@@ -119,7 +124,7 @@
     }
 
     .card p{
-      font-size:30px;
+      font-size:32px;
       font-weight:bold;
       color:#0f172a;
     }
@@ -139,8 +144,9 @@
       max-width:75%;
       padding:18px;
       border-radius:18px;
-      line-height:1.6;
+      line-height:1.7;
       font-size:15px;
+      white-space:pre-wrap;
     }
 
     .bot{
@@ -179,8 +185,8 @@
       flex:1;
       border:1px solid #cbd5e1;
       border-radius:14px;
-      padding:16px;
-      font-size:15px;
+      padding:18px;
+      font-size:16px;
       outline:none;
     }
 
@@ -189,10 +195,11 @@
       color:white;
       border:none;
       border-radius:14px;
-      padding:0 28px;
+      padding:0 30px;
       cursor:pointer;
-      font-size:15px;
+      font-size:16px;
       transition:0.2s;
+      font-weight:bold;
     }
 
     .input-area button:hover{
@@ -301,44 +308,23 @@
 
     <!-- CHAT -->
 
-    <div class="chat-container">
+    <div class="chat-container" id="chat">
 
       <div class="message bot">
 
-        👋 Hola Viviana. Soy EMPRETUR IA.
+👋 Hola Viviana. Soy EMPRETUR IA.
 
-        <br><br>
+Puedo ayudarte con:
 
-        Puedo ayudarte con:
-        <br>
-        • Consultas de indicadores
-        <br>
-        • Resúmenes automáticos
-        <br>
-        • Información de proyectos
-        <br>
-        • Cobertura territorial
-        <br>
-        • Generación de reportes
-        <br>
-        • Información consolidada desde Google Sheets
+• Consultas de indicadores
+• Información de proyectos
+• Cobertura territorial
+• Resúmenes automáticos
+• Generación de reportes
+• Información consolidada desde Google Sheets
 
         <div class="tag">
           Fuente: Google Sheets institucional
-        </div>
-
-      </div>
-
-      <div class="message user">
-        ¿Cuántos beneficiarios tiene el componente de sostenibilidad?
-      </div>
-
-      <div class="message bot">
-
-        El componente de Sostenibilidad para MiPymes Turísticas cuenta actualmente con 300 empresas diagnosticadas y 200 priorizadas para procesos de intervención técnica.
-
-        <div class="tag">
-          Actualizado automáticamente desde Sheets
         </div>
 
       </div>
@@ -349,18 +335,121 @@
 
     <div class="input-area">
 
-      <input 
-        type="text" 
+      <input
+        type="text"
+        id="input"
         placeholder="Pregunta sobre los proyectos..."
       />
 
-      <button>
+      <button id="send">
         Enviar
       </button>
 
     </div>
 
   </div>
+
+  <!-- SCRIPT -->
+
+  <script>
+
+    const button = document.getElementById("send");
+    const input = document.getElementById("input");
+    const chat = document.getElementById("chat");
+
+    async function sendMessage() {
+
+      const message = input.value.trim();
+
+      if (!message) return;
+
+      // Mensaje usuario
+
+      const userHTML = `
+        <div class="message user">
+          ${message}
+        </div>
+      `;
+
+      chat.innerHTML += userHTML;
+
+      input.value = "";
+
+      // Loading
+
+      const loadingHTML = `
+        <div class="message bot" id="loading">
+          Pensando...
+        </div>
+      `;
+
+      chat.innerHTML += loadingHTML;
+
+      chat.scrollTop = chat.scrollHeight;
+
+      try {
+
+        // ⚠️ PEGA AQUÍ TU URL DE APPS SCRIPT
+
+        const response = await fetch(
+          "PEGA_AQUI_TU_URL_APPS_SCRIPT",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              message: message
+            })
+          }
+        );
+
+        const data = await response.json();
+
+        document.getElementById("loading").remove();
+
+        const botHTML = `
+          <div class="message bot">
+            ${data.reply}
+
+            <div class="tag">
+              Respuesta generada por EMPRETUR IA
+            </div>
+          </div>
+        `;
+
+        chat.innerHTML += botHTML;
+
+      } catch(error) {
+
+        document.getElementById("loading").remove();
+
+        const errorHTML = `
+          <div class="message bot">
+            ❌ Error conectando con la IA.
+          </div>
+        `;
+
+        chat.innerHTML += errorHTML;
+
+      }
+
+      chat.scrollTop = chat.scrollHeight;
+
+    }
+
+    // Click botón
+
+    button.addEventListener("click", sendMessage);
+
+    // Enter teclado
+
+    input.addEventListener("keypress", function(e) {
+
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+
+    });
+
+  </script>
 
 </body>
 </html>
