@@ -389,15 +389,14 @@ Puedo ayudarte con:
 
       try {
 
-        // URL APPS SCRIPT
+        // URL RENDER
 
-        await fetch(
-          "https://script.google.com/macros/s/AKfycbxFjEvZCilNtjvR-p-rxGKnrePChYHupDgxBtJisAfhFDZshuplxNEf3z2DGYPq4gvkIg/exec",
+        const response = await fetch(
+          "https://TU-URL-RENDER.onrender.com/chat",
           {
             method: "POST",
-            mode: "no-cors",
             headers: {
-              "Content-Type": "text/plain"
+              "Content-Type": "application/json"
             },
             body: JSON.stringify({
               message: message
@@ -405,19 +404,21 @@ Puedo ayudarte con:
           }
         );
 
+        const data = await response.json();
+
         // Eliminar loading
 
         document.getElementById("loading").remove();
 
-        // Respuesta temporal
+        // Respuesta IA
 
         const botHTML = `
           <div class="message bot">
 
-            ✅ Mensaje enviado correctamente a EMPRETUR IA.
+            ${data.reply}
 
             <div class="tag">
-              Conexión Apps Script activa
+              Respuesta generada por EMPRETUR IA
             </div>
 
           </div>
@@ -431,11 +432,13 @@ Puedo ayudarte con:
 
         const errorHTML = `
           <div class="message bot">
-            ❌ Error conectando con la IA.
+            ❌ Error conectando con Render/OpenAI.
           </div>
         `;
 
         chat.innerHTML += errorHTML;
+
+        console.error(error);
 
       }
 
