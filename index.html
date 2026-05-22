@@ -389,29 +389,37 @@ Puedo ayudarte con:
 
       try {
 
-        // ⚠️ PEGA AQUÍ TU URL DE APPS SCRIPT
+        // URL APPS SCRIPT
 
-        const response = await fetch(
+        await fetch(
           "https://script.google.com/macros/s/AKfycbxFjEvZCilNtjvR-p-rxGKnrePChYHupDgxBtJisAfhFDZshuplxNEf3z2DGYPq4gvkIg/exec",
           {
             method: "POST",
+            mode: "no-cors",
+            headers: {
+              "Content-Type": "text/plain"
+            },
             body: JSON.stringify({
               message: message
             })
           }
         );
 
-        const data = await response.json();
+        // Eliminar loading
 
         document.getElementById("loading").remove();
 
+        // Respuesta temporal
+
         const botHTML = `
           <div class="message bot">
-            ${data.reply}
+
+            ✅ Mensaje enviado correctamente a EMPRETUR IA.
 
             <div class="tag">
-              Respuesta generada por EMPRETUR IA
+              Conexión Apps Script activa
             </div>
+
           </div>
         `;
 
