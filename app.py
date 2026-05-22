@@ -27,20 +27,26 @@ client = OpenAI(
 
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKY9V7t5EUEgVSFf-cY8R-LAPeg7XTgD5XIACALr4v0v7F7jI-7jhwpu0v8zIJ-ezfITqb0f4N8OFB/pub?gid=812671645&single=true&output=csv"
 
-# Leer Google Sheet
+# Intentar cargar sheet
 
-df = pd.read_csv(SHEET_URL)
+try:
+    df = pd.read_csv(SHEET_URL)
+    datos_sheet = df.to_string()
+except Exception as e:
+    datos_sheet = f"Error cargando Google Sheets: {str(e)}"
 
-# Modelo mensaje
+# Modelo
 
 class Message(BaseModel):
     message: str
 
-# Ruta raíz
+# Root
 
 @app.get("/")
 async def root():
-    return {"status": "EMPRETUR IA funcionando"}
+    return {
+        "status": "EMPRETUR IA funcionando"
+    }
 
 # Chat
 
@@ -48,12 +54,6 @@ async def root():
 async def chat(data: Message):
 
     pregunta = data.message
-
-    # Convertir Sheet a texto
-
-    datos = df.to_string()
-
-    # OpenAI
 
     response = client.chat.completions.create(
         model="gpt-4.1-mini",
@@ -63,11 +63,9 @@ async def chat(data: Message):
                 "content": f"""
                 Eres EMPRETUR IA.
 
-                Responde usando la información del Google Sheet.
+                Usa esta información del Google Sheet:
 
-                Datos disponibles:
-
-                {datos}
+                {datos_sheet}
 
                 Responde claro y profesionalmente.
                 """
