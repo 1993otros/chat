@@ -6,12 +6,12 @@ import os
 
 app = FastAPI()
 
-# Permitir conexiones frontend
+# CORS DEFINITIVO
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -27,7 +27,13 @@ client = OpenAI(
 class Message(BaseModel):
     message: str
 
-# Endpoint chat
+# Ruta raíz
+
+@app.get("/")
+async def root():
+    return {"status": "EMPRETUR IA funcionando"}
+
+# Chat endpoint
 
 @app.post("/chat")
 async def chat(data: Message):
